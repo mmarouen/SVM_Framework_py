@@ -1,7 +1,20 @@
-def RKHS(Input,Y,Xtest=None,yTest=None,
-         opType='Classification',classifier='SVM',kernel='linear',
-         degree=3,gamm=1,C=1,learning_rate=None,tol=1e-2,epochs=400,
-         traceObj=False,gradCheck=False,optMode='Newton'):
+#gateway function for the solver
+#output model parameters + prediction
+
+def RKHS(Input,Y,Xtest=None,yTest=None, #input data
+         opType='Classification', #classification or regression
+         classifier='SVM', #classifier name 'SVM', 'LS', 'Softmax'
+         kernel='linear', #kernel type: 'linear', 'gaussian', 'polynomial'
+         degree=3, #polynom degree
+         gamm=1, #RBF parameter
+         C=1, #cost parameter: lambda=1/(2*C)
+         learning_rate=None, 
+         tol=1e-2,
+         epochs=400, #number of iterations
+         traceObj=False, 
+         gradCheck=False,
+         optMode='NGD' #optimization method 'NGD', 'CGD'
+        ):
     import numpy as np
     rsp=transformResponse(Y,classifier,opType)
     resp=rsp['respMat']
