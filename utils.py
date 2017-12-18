@@ -56,5 +56,24 @@ def buildKernel(ker,X,Z,degree=3,gamm=0.1,pred=False):
         S=np.hstack((np.zeros(N+1).reshape(N+1,1),S))
     return {'H':H,'KerMat':kermat,'S':S}
 
+#model predictions
+def predictRKHS(Input,rkhs):
+    import numpy as np
+    X=np.asmatrix(Input)
+    args=rkhs['rkhsargs']
+    gamm=args['gamm']
+    degree=args['degree']
+    Xtrain=args['X']
+    kerName=args['kername']
+    opType=args['opType']
+    CL=args['classes']
+    out=buildKernel(kerName,Xtrain,X,degree,gamm,pred=True)
+    Ker=out['KerMat']
+    alphahat=rkhs['beta']
+    beta0=alphahat[0]
+    fx=beta0+np.dot(Ker,np.matrix(alphahat[1:]).T)
+    out=transformOutput(fx,CL,opType)
+    yhat=out['yhat']
+    return yhat
 
 
