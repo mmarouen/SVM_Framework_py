@@ -5,7 +5,7 @@ SVM & Softmax classifiers supported
 NB:  
 -Softmax classifier refers to penalized and kernalized logistic regression  
 -Classical logistic regression can be obtained by setting cost very high & using a linear kernel  
--Python implementation in a seperate repository  
+-R implementation in a seperate repository  
 # 1. Classifiers/regressors:  
 LS: regression classifier using penalized least squared loss  
 Softmax: Softmax classifier using cross entropy loss  
