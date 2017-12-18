@@ -1,0 +1,37 @@
+def RKHS(Input,Y,Xtest=None,yTest=None,
+         opType='Classification',classifier='SVM',kernel='linear',
+         degree=3,gamm=1,C=1,learning_rate=None,tol=1e-2,epochs=400,
+         traceObj=False,gradCheck=False,optMode='Newton'):
+    import numpy as np
+    rsp=transformResponse(Y,classifier,opType)
+    resp=rsp['respMat']
+    cl=rsp['Classes']
+    X=np.asmatrix(Input)
+    yhat=np.array([])
+    betahat=np.array([])
+    sv=np.array([])
+    lambd=1/(2*C)
+    
+    KerMat=buildKernel(kernel,X,X,degree=degree,gamm=gamm)
+    Ker=KerMat['KerMat']
+    H=KerMat['H']
+    S=KerMat['S']
+    
+    if (opType=='Regression') & (classifier=='LS'):
+        inv=np.linalg.inv(np.dot(H.T,H)+lambd*S)
+        betahat=np.dot(np.dot(inv,H.T),resp)
+    
+    if opType=='Classification':
+        if optMode=='NGD': out=NGD(X,resp,Ker,classifier,lambd,tol,epochs)
+        #if optMode=='CGD': out=CGD(X,resp,XTest,resp1,Ker,kerT,H,S,classifier,lambd,tol,epochs)
+        betahat=out['betahat']
+        n_iter=out['n_iter']
+        sv=out['sv']
+        
+    f_x=np.dot(H,betahat).T
+    out=transformOutput(f_x,cl,opType)
+    yhat=out['yhat']
+    modelargs={'kername':kernel,'gamm':gamm,'degree':degree,'X':X,'y':resp,'epochs':epochs,
+                 'lambd':lambd,'classes':cl,'opType':opType}
+    return{'yhat':yhat,'fx':f_x,'yhatMat':out['yhatMat'],'beta':betahat,'sv':sv,'rkhsargs':modelargs,
+           'n_iter':n_iter}
